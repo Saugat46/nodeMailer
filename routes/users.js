@@ -3,8 +3,9 @@ var router = express.Router();
 const {User} = require("../model");
 const schemaValidation = require('../middleware/validation-middleware');
 const { registrationSchema } = require('../schemas/auth-schemas');
+const sendEmail = require('../config/mailer');
 
-const user = {username: "niraj", password:"password"}
+// const user = {username: "admin", password:"admin"}
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -23,6 +24,7 @@ router.post('/register',schemaValidation(registrationSchema,"register"), async (
   console.log(req.body);
   const{uname, email, password}=req.body
   await User.create(req.body)
+  sendEmail({receiver:"saugatsharma@yopmail.com",template:"registration",content:{name:req.body.name,password:password}})
   res.redirect("/users/login")
 })
 
